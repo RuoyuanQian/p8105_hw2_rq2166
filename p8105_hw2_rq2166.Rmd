@@ -1,0 +1,71 @@
+---
+title: "hw2"
+author: "Ruoyuan Qian"
+date: "2019/9/24"
+output: github_document
+---
+```{r setup}
+library(tidyverse)
+library(readxl)
+```
+
+# Problem 1
+```{r Problem 1}
+Trash_Wheel = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+                         sheet="Mr. Trash Wheel",
+                        )%>%
+              janitor::clean_names()%>%
+              drop_na(dumpster)%>%
+              mutate(sports_balls=round(sports_balls,0),
+                  sports_balls=as.integer(sports_balls))%>%
+              select(-x15)
+   
+  #Trash_Wheel =            t(na.omit(t(Trash_Wheel)))
+
+```
+
+view(Trash_Wheel )
+
+```{r}
+precipitation_2018 = 
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+             sheet="2018 Precipitation",
+             skip=1)%>%
+  janitor::clean_names()%>%
+  drop_na()%>%
+  mutate(year=2018)
+
+precipitation_2017 = 
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+             sheet="2017 Precipitation",
+             skip=1)%>%
+  janitor::clean_names()%>%
+  drop_na()%>%
+  mutate(year=2017)
+
+precipitation = bind_rows(precipitation_2018,
+                          precipitation_2017)%>%
+                mutate(month.name=as.character(month))
+```
+
+```{r}
+mean_prec_2018 = 
+  precipitation %>% 
+  filter(year=="2018")%>%
+  pull(total)%>%
+  sum
+
+med_sportsballs =
+  Trash_Wheel %>%
+  pull(sports_balls) %>%
+  median
+  
+
+```
+
+
+```{r}
+
+
+```
+
