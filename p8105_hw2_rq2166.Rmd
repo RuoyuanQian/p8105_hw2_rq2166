@@ -1,0 +1,118 @@
+---
+title: "hw2"
+author: "Ruoyuan Qian"
+date: "2019/9/24"
+output: github_document
+---
+```{r setup}
+library(tidyverse)
+library(readxl)
+```
+
+# Problem 1
+```{r Problem 1}
+Trash_Wheel = read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+                         sheet="Mr. Trash Wheel",
+                         
+                        )%>%
+              janitor::clean_names()%>%
+              drop_na(dumpster)%>%
+              mutate(sports_balls=round(sports_balls,0),
+                  sports_balls=as.integer(sports_balls))%>%
+              select(-x15)
+   
+  #Trash_Wheel =            t(na.omit(t(Trash_Wheel)))
+
+```
+
+view(Trash_Wheel )
+
+,
+                         range="A2:N54"
+
+```{r}
+precipitation_2018 = 
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+             sheet="2018 Precipitation",
+             skip=1)%>%
+  janitor::clean_names()%>%
+  drop_na()%>%
+  mutate(year=2018)
+
+precipitation_2017 = 
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",
+             sheet="2017 Precipitation",
+             skip=1)%>%
+  janitor::clean_names()%>%
+  drop_na()%>%
+  mutate(year=2017)
+
+precipitation = bind_rows(precipitation_2018,
+                          precipitation_2017)%>%
+                mutate(month.name=as.character(month))
+```
+
+```{r}
+mean_prec_2018 = 
+  precipitation %>% 
+  filter(year=="2018")%>%
+  pull(total)%>%
+  sum
+
+med_sportsballs =
+  Trash_Wheel %>%
+  filter(year==2017) %>%
+  pull(sports_balls)%>%
+  median
+  
+
+```
+
+
+# Problem 2
+```{r}
+pols_month=read_csv("./data/fivethirtyeight_datasets/pols-month.csv")%>%
+  separate(mon, c("year","month","day"), "-")%>%
+  pivot_longer(
+    c(prez_gop,prez_dem),
+   values_to = "president")%>%
+  select(-day)
+#read_excel(".data/fivethirtyeight_datasets/unemployment.xlsx")
+#read_excel(".data/fivethirtyeight_datasets/snp.xlsx")
+```
+
+```{r}
+unemployment=read_csv("./data/fivethirtyeight_datasets/unemployment.csv")%>%
+    pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+   values_to = "unemployment")%>%
+  mutate(
+    month=recode(month,"Jan"=1,"Feb"=2, "Mar"=3,
+                 "Apr"=4,"May"=5, "Jun"=6,"Jul"=7,
+                 "Aug"=8,"Sep"=9,"Oct"=10,"Nov"=11,"Dec"=12))%>%
+    rename(year=Year)%>%
+  arrange(year,month)%>%
+  mutate(year=as.character(year),
+         month=as.character(month))
+```
+```{r}
+snp=read_csv("./data/fivethirtyeight_datasets/snp.csv")%>%
+    separate(date, c("month","day","year"), "/")%>%
+     select(-day) %>%
+  select(year,month,everything()) %>%
+  arrange(year,month)
+  
+
+```
+
+```{r}
+tem_result = left_join(pols_month,snp,by=c("year","month"))
+  result = left_join(tem_result,unemployment,by=c("year","month"))
+```
+
+```{r}
+Popular_Baby_Names = read_csv("./data/Popular_Baby_Names.csv")%>%
+              janitor::clean_names()
+```
+
