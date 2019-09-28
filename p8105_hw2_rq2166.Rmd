@@ -121,9 +121,9 @@ Summary:
 
 As for the three datasets `pols-month`, `snp` and `unemployment`.
 
-The variable number in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%length()``,``r snp%>%length()`` and ``r unemployment%>%length()``, respectively.
+The variable number in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%length()``, ``r snp%>%length()`` and ``r unemployment%>%length()``, respectively.
 
-The number of observation in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%pull(year)%>%length()``,``r snp%>%pull(year)%>%length()`` and ``r unemployment%>%pull(year)%>%length()``, respectively. 
+The number of observation in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%pull(year)%>%length()``, ``r snp%>%pull(year)%>%length()`` and ``r unemployment%>%pull(year)%>%length()``, respectively. 
 
 The number of `range of years` in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%pull(year)%>%range``,  ``r snp%>%pull(year)%>%range`` and ``r unemployment%>%pull(year)%>%range``, respectively. 
 
