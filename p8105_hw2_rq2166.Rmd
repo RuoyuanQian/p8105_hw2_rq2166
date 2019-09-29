@@ -4,7 +4,7 @@ author: "Ruoyuan Qian"
 date: "2019/9/28"
 output: github_document
 ---
-```{r setup}
+```{r setup, message=FALSE}
 library(tidyverse)
 library(readxl)
 library(dplyr)
@@ -50,9 +50,24 @@ precipitation_2017 =
 precipitation = bind_rows( precipitation_2018,
                            precipitation_2017 )%>%
                 mutate( month = as.integer(month),
-                        month = month.name[month])
+                        month = month.name[month]) %>% 
+                select(year,month,everything())
 ```
-The number of observation in `Trash_Wheel` is ``r Trash_Wheel%>%pull(dumpster)%>%length()``, the number of observation in `precipitation` is ``r precipitation%>%pull(year)%>%length()``. The key variable in `Trash_Wheel` is `dumpster`, key variables in `precipitation` are `year` and `month`. 
+**`Description:`**
+
+`Mr. Trash Wheel`
+
+The number of observation in `Trash_Wheel` is ``r Trash_Wheel%>%pull(dumpster)%>%length()``. 
+
+The key variables in `Mr. Trash Wheel` spreadsheet include information on the dumpter number(`dumpster`), date of collection(`year`, `month`, `date`), amount of total litter(`weight_tons`, `volume_cubic_yards`) and litter type(`Plastic Bottles`, `Glass Bottles`, `Grocery Bags`, `Chip Bags`, `Sports Balls`). Additionally, it contians Homes Powered(`Homes Powered*`) - Each ton of trash equates to on average 500 kilowatts of electricity.
+
+
+`precipitation`
+
+The number of observation in `precipitation` is ``r precipitation%>%pull(year)%>%length()``. The key variable in  `precipitation` is the amount of precipitation(`total`) in each month(`month`) in different years(`year`). 
+
+
+**`Total and Median`**
 
 The `total` precipitation in 2018 is ``r precipitation %>%filter(year=="2018")%>%pull(total)%>%sum``, the `median` number of `sports balls` in a dumpster in 2017 is ``r Trash_Wheel %>%filter(year==2017) %>%pull(sports_balls)%>%median``.
 
@@ -61,7 +76,7 @@ The `total` precipitation in 2018 is ``r precipitation %>%filter(year=="2018")%>
 # Problem 2
 
 Clean the data in `pols-month.csv`
-```{r}
+```{r ,message=FALSE}
 pols_month = 
   read_csv ( "./data/fivethirtyeight_datasets/pols-month.csv" )%>%
   separate ( mon, c("year","month","day"), "-" )%>%
@@ -69,16 +84,17 @@ pols_month =
     c( prez_gop,prez_dem ),
     names_to = "president",
     names_prefix = "prez_" )%>%
-  filter ( value == 1) %>%
+  filter ( value != 0) %>%
   select ( -day,-value)%>%
   mutate (
     month = as.integer(month),
     month = month.name[month])
+
 ```
 
 
 Clean the data in `snp.csv`
-```{r}
+```{r ,message=FALSE}
 snp = 
   read_csv( "./data/fivethirtyeight_datasets/snp.csv" )%>%
   separate( date, c("month","day","year"), "/" )%>%
@@ -94,7 +110,7 @@ snp =
 
 
 Tidy the `unemployment.csv`
-```{r}
+```{r ,message=FALSE}
 unemployment = 
   read_csv( "./data/fivethirtyeight_datasets/unemployment.csv" )%>%
   pivot_longer(
@@ -117,27 +133,32 @@ Merge `snp` into `pols` , and merging `unemployment` into the `result`
   result     = left_join( tem_result , unemployment,
                         by=c("year","month"))
 ```
-Summary: 
 
-As for the three datasets `pols-month`, `snp` and `unemployment`.
+**Summary of `pols_month`:** 
 
-The variable number in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%length()``, ``r snp%>%length()`` and ``r unemployment%>%length()``, respectively.
+The variable number is ``r pols_month %>%length()``, the number of observation ``r pols_month %>%pull(year)%>%length()``, the `range of years` is from ``r range(pols_month%>%pull(year))[1]`` to ``r range(pols_month%>%pull(year))[2]``. 
+###The key variables are `year` and `month`.
 
-The number of observation in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%pull(year)%>%length()``, ``r snp%>%pull(year)%>%length()`` and ``r unemployment%>%pull(year)%>%length()``, respectively. 
+**Summary of `snp`:** 
 
-The number of `range of years` in `pols-month`, `snp` and `unemployment` is ``r pols_month %>%pull(year)%>%range``,  ``r snp%>%pull(year)%>%range`` and ``r unemployment%>%pull(year)%>%range``, respectively. 
+The variable number in `snp` is ``r snp%>%length()``. The number of observation in `snp` is ``r snp%>%pull(year)%>%length()``. The  `range of years` in `snp` is  from ``r range(snp%>%pull(year))[1]`` to ``r range(snp%>%pull(year))[2]``.
 
-The names of key variables in `pols-month`, `snp` and `unemployment` are `year` and `month`.
+**Summary of `unemployment`:** 
 
-For the result:
+The variable number in `unemployment` is ``r unemployment%>%length()``. The number of observation in `unemployment` is ``r unemployment%>%pull(year)%>%length()``.The `range of years` in `unemployment` is from ``r range(unemployment%>%pull(year))[1]`` to `range(unemployment%>%pull(year))[2]`. 
 
-In result, the number of observations  and variables is ``r result%>%dim() ``, respectively. The range of years is ``r result%>%pull(year)%>%range``, the key variables are `year` and `month`.
+The names of **key variables** in `pols-month`, `snp` and `unemployment` are `year` and `month`.
+
+
+**Summary of `result`:** 
+
+In result, the number of observations and variables is ``r result%>%dim()``, respectively. The range of years is from``r range(result%>%pull(year))[1]`` to ``r range(result%>%pull(year))[2]``, the key variables are `year` and `month`.
 
 
 # problem 3
 
 Tidy data `Popular_Baby_Names.csv`
-```{r}
+```{r ,message=FALSE}
 ## change ethnicity and childs_first_name into consistent formats respectively
 ## remove duplicate rows
 Popular_Baby_Names = 
@@ -154,39 +175,37 @@ Popular_Baby_Names =
 ```
 
 Table of popularity of the name “Olivia” 
-```{r}
+```{r ,message=FALSE}
 popularity_of_olivia =
   Popular_Baby_Names %>% 
   filter(childs_first_name == "Olivia") %>% 
   select(-count) %>% 
   pivot_wider(names_from  = year_of_birth, 
-              values_from = rank) %>% 
-  select(childs_first_name , everything())
+              values_from = rank) %>%
+  select(-gender,-childs_first_name) %>% 
+  knitr::kable(
+               caption = "Table 1  The rank in popularity of the name “Olivia” as a female baby name over time ",
+               format = "html")
+  
+  popularity_of_olivia
 ```
 
-Table of the most popular name among male children
-```{r}
-male_name = 
-  Popular_Baby_Names %>%  
-  filter(gender == "MALE")
 
-sum_name = 
-  summarise(
-     group_by(male_name , childs_first_name),
-     sum(count)) %>% 
-  janitor::clean_names()%>% 
-  filter(sum_count == max(sum_count)) %>% 
-  pull(childs_first_name)
+Table of the most popular name among male children over time
+```{r ,message=FALSE}
 
 popular_name_of_male =
   Popular_Baby_Names %>% 
-  filter(childs_first_name == sum_name) %>% 
+  filter(rank == 1 & gender == "MALE") %>% 
   select(-count) %>% 
   pivot_wider(
     names_from  = year_of_birth, 
-    values_from = rank) %>% 
-  select(childs_first_name , everything())
-
+    values_from = childs_first_name) %>% 
+  select(-gender,-rank) %>% 
+  knitr::kable(
+               caption = "Table 2  The most popular name among male children over time ",
+               format = "html")
+popular_name_of_male
 ```
 
 ```{r}
@@ -194,12 +213,14 @@ Popular_Baby_Names %>%
   filter(year_of_birth == 2016 & 
          ethnicity == "WHITE NON HISPANIC" &
          gender == "MALE") %>% 
-  ggplot( aes (x = rank , y = count ) ) +
-    geom_point(color = 4,alpha = .6, size=2.5) +
-    labs(
-       x    = "rank in popularity",
-       y    = "number of childern with a name")
-
+  ggplot( aes (x = rank , y = count ,size=count) ) +
+  geom_point(color = 4,alpha = .6) +
+  labs(
+       x    = "Rank in popularity",
+       y    = "Number of childern with a name",
+       title = "Plot 1  The number with a name against the rank in popularity", 
+       subtitle = "Male, white non-hispanic children born in 2016")
+  
 ```
 
 
