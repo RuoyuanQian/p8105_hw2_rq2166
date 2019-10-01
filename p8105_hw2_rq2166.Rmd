@@ -178,7 +178,7 @@ Popular_Baby_Names =
   distinct()
 ```
 
-Table of popularity of the name “Olivia” 
+Make table of popularity of the name “Olivia” 
 ```{r ,message=FALSE}
 popularity_of_olivia =
   Popular_Baby_Names %>% 
@@ -195,7 +195,7 @@ popularity_of_olivia
 ```
 
 
-Table of the most popular name among male children over time
+Make table of the most popular name among male children over time
 ```{r ,message=FALSE}
 
 popular_name_of_male =
