@@ -21,7 +21,6 @@ Read and clean the `Mr. Trash Wheel sheet`
 Trash_Wheel = 
    read_excel( "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
                sheet = "Mr. Trash Wheel",
-               skip  = 1,
                range = "A2:N408")%>%
    janitor::clean_names()%>%
    drop_na( dumpster )%>%
@@ -66,7 +65,7 @@ The key variables in `Mr. Trash Wheel` spreadsheet include information on the du
 `precipitation`
 
 The number of observation in `precipitation` is ``r precipitation%>%pull(year)%>%length()``, and there are ``r precipitation%>%length()`` variables in it.
-The key variable in  `precipitation` is the amount of precipitation(`total`) in different time. 
+The key variable in  `precipitation` is the amount of precipitation(`total`) at different time. 
 
 
 **Total and Median**
@@ -139,7 +138,9 @@ Merge `snp` into `pols` , and merging `unemployment` into the `result`
 
 **Summary of `pols_month`:** 
 
-The variable number is ``r pols_month %>%length()``, the number of observation ``r pols_month %>%pull(year)%>%length()``, the `range of years` is from ``r range(pols_month%>%pull(year))[1]`` to ``r range(pols_month%>%pull(year))[2]``. 
+According to the discription of `pols_month`, `prez_gop` represents  indicator of whether the president was `republican` on the associated date (1 = yes, 0 = no), but there are five observations in `prez_gop` in year 1974 containing value `"2"`. I grouped these observations in to `gop`, since `prez_dem`(the indicator of whether the president was `democratic` on the associated date (1 = yes, 0 = no)) of these five observations is `"0"`.
+
+The variable number is ``r pols_month %>%length()``, the number of observation is ``r pols_month %>%pull(year)%>%length()``, the `range of years` is from ``r range(pols_month%>%pull(year))[1]`` to ``r range(pols_month%>%pull(year))[2]``. 
 The dataset is about the number of national politicians who are democratic or republican at any given time. The key variables include the number of governors of different parties associated with the date(`gov_gop`, `gov_dem`), the number of representatives of different parties on the associated date(`rep_gop`, `rep_dem`), the number of senators of different parties on the associated date(`sen_gop`, `sen_dem`) and indicator of whether the president was republican or democratic on the associated date(`president`).
 
 **Summary of `snp`:** 
